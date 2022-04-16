@@ -60,9 +60,22 @@ class Issue:
 
 
 class IssueTemplate:
-    def __init__(self, **params):
+    def __init__(self, **params) -> None:
         self.__dict__.update(params)
 
     def post(self) -> Issue:
         issue_id = api.issues.create_issue(**vars(self))
         return Issue(issue_id)
+
+
+class IssueGroup:
+    def __init__(self, **kwargs) -> None:
+        self.__dict__.update(kwargs)
+
+    def get_issue_template(self) -> IssueTemplate:
+        static_params = ['assignee_id', 'priority']
+        issue_template = IssueTemplate()
+        for k, v in vars(self).items():
+            if k in static_params:
+                setattr(issue_template, k, v)
+        return issue_template
